@@ -1,0 +1,14 @@
+# exercise 3-4
+#   Write a program that reads a list of item and quantity pairs
+#   and for each item on the list accumulates the total quantity
+#   At the end, it prints the items and total quantities sorted
+#   alphabetically by item
+#
+#   input:  rows of item and quantity
+#   output: alphabetical list of items and total quantities
+
+NF > 0  { quantities[$1] += $2 }
+END     {
+          for (item in quantities)
+            print(item, quantities[item]) | "sort"
+        }
