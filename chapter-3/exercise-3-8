@@ -1,0 +1,24 @@
+# exercise 3-8
+#   How would you convert dates into a form in which you can do
+#   arithmetic like computing the number of days between two dates?
+#
+# days-since-unix-epoch
+#   input:  date of the form mm-dd-yyyy
+#   output: date of the form mm-dd-yyyy, days since the unix epoch
+
+    { print $1, toDays($1) }
+
+function toDays(date) {
+  split("31 28 31 30 31 30 31 31 30 31 30 31", daysInMonths)
+  split(date, separatedDate, "-")
+
+  month = separatedDate[1]
+  day   = separatedDate[2]
+  year  = separatedDate[3]
+
+  sinceUnixEpoch = (year - 1970) * 365 + int((year - 1970) / 4)
+  if (year % 4 == 0) daysInMonths[2]++
+  for (i = 1; i < month; i++) sinceUnixEpoch += daysInMonths[i]
+  return sinceUnixEpoch + day
+}
+
