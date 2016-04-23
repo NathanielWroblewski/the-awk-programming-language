@@ -1,6 +1,16 @@
-# exercise 3-1
-#   modify the program to ignore blank lines
-
+# exercise 3-2
+#   Add the more general regular expression for a number.
+#   How does it effect the running time?
+#     > $ time awk -f exercise-3-2 numbers.dat
+#     >    real  0m0.003s
+#     >    user  0m0.001s
+#     >    sys   0m0.002s
+#     > $ time awk -f exercise-3-1 numbers.dat
+#     >    real  0m0.003s
+#     >    user  0m0.001s
+#     >    sys   0m0.002s
+#     > Negligible effect on runtime.
+#
 # sum - print sums of numeric columns
 #   input:  rows of integers and strings
 #   output: sums of numeric columns
@@ -8,8 +18,9 @@
 
 NR == 1 {
           nfld = NF
-          for (i = 1; i <= NF; i++)
+          for (i = 1; i <= NF; i++) {
             numcol[i] = isnum($i)
+          }
         }
 
 NF > 0  {
@@ -28,4 +39,4 @@ END     {
           }
         }
 
-function isnum(n) { return n ~ /^[+-]?[0-9]+$/ }
+function isnum(n) { return n ~ /^[+-]?[[:digit:]]+$/ }
