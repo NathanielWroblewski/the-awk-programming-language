@@ -1,0 +1,47 @@
+# exercise 3-6
+#   Make a version of the histogram code that divides the input into a
+#   specified number of buckets, adjusting the ranges according to the
+#   data seen.
+#
+# histogram
+#   input:  numbers
+#   output: histogram
+
+    { data[NR] = $1 }
+
+END {
+      # scale histogram to prevent columns from going onto new lines
+      scale = NR / 100
+
+      # get min, max, and range from data
+      min = max = data[1]
+      for (i = 1; i < length(data); i++) {
+        if (data[i] < min) min = data[i]
+        if (data[i] > max) max = data[i]
+      }
+      range = max - min
+
+      # pick a number of buckets
+      buckets = int(range / (range ^ 0.5))
+
+      # calculate frequencies
+      for (i = 1; i < length(data); i++) {
+        x[int(data[i] / buckets)] += 1
+      }
+
+      print "Each * represents about " scale " occurrences\n"
+
+      # prints histogram
+      for (i = 0; i < buckets; i++) {
+        top = buckets * i + (buckets - 1)
+        printf(" %2d - %2d: %3d %s\n",
+          buckets * i, top, x[i], rep(x[i] / scale, "*"))
+      }
+      printf(" %2d - %2d: %3d %s\n", top, max, x[buckets], rep(x[buckets] / scale, "*"))
+    }
+
+function rep(n, s, t) {
+  while (n-- > 0)
+    t = t s
+  return t
+}
