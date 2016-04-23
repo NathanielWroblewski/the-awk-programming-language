@@ -1,0 +1,24 @@
+# exercise 3-4
+#   Scale the rows of stars so they don't overflow the line length
+#   when there's a lot of data
+#
+# histogram
+#   input:  numbers between 0 and 100
+#   output: histogram of deciles
+
+    { x[int($1 / 10)]++ }
+
+END {
+      scale = NR / 100
+      print "Each * represents about " scale " occurrences\n"
+      for (i = 0; i < 10; i++)
+        printf(" %2d - %2d: %3d %s\n",
+          10 * i, 10 * i + 9, x[i], rep(x[i] / scale, "*"))
+      printf("100:      %3d %s\n", x[10], rep(x[10] / scale, "*"))
+    }
+
+function rep(n, s, t) {
+  while (n-- > 0)
+    t = t s
+  return t
+}

@@ -1,0 +1,7 @@
+# generate random integers
+#   usage: awk -f generate-random-integers | awk -f histogram
+
+BEGIN {
+        for (i = 1; i <= 200; i++)
+          print int(101 * rand())
+      }
