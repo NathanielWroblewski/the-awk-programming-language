@@ -1,0 +1,19 @@
+# exercise 3-7
+#   Modify sumcomma, the program that adds numbers with commas,
+#   to check that the commas in the numbers are properly positioned.
+#
+# sumcomma
+#   input:  numbers
+#   output: comma-delimited sum
+
+sprintf("%.2f", $1) == addComma($1) { gsub(/,/, ""); sum += $0 }
+END                                 { print addComma(sum) }
+
+function addComma(x, num) {
+  if (x < 0)
+    return "-" addComma(-x)
+  num = sprintf("%.2f", x)
+  while (num ~ /[0-9]{4}/)
+    sub(/[0-9]{3}[,.]/, ",&", num)
+  return num
+}
