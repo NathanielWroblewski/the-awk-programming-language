@@ -1,0 +1,2 @@
+NF <= 0			You must provide at least one field
+/[a-zA-Z]/	Field cannot contain text
