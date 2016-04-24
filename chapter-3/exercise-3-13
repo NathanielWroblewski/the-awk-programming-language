@@ -1,0 +1,40 @@
+# exercise 3-13
+#   What is the best way to extend this program to handle multiple
+#   sets of delimiter pairs?
+#   > $ awk -f exercise-3-13 bracketed-code.dat "{" "}" "\(" "\)" "\[" "\]"
+#
+# p12check - check input for alternating delimiters
+
+BEGIN   {
+          for (i = 2; i < ARGC + 1; i += 2) {
+            opening[i - 1] = ARGV[i]
+            closing[i - 1] = ARGV[i + 1]
+            counter[i - 1] = 0
+            ARGV[i] = ARGV[i + 1] = ""
+          }
+        }
+
+NF > 0  {
+          check(opening, 1)
+          check(closing, 0)
+        }
+
+END     {
+          for (i = 1; i < length(counter); i++) {
+            if (counter[i] == 1) {
+              print("missing", closing[i], "at end")
+            }
+          }
+        }
+
+function check(delimiters, flag) {
+  for (i = 1; i < length(delimiters); i++) {
+    delimiter = delimiters[i]
+    if ($0 ~ delimiter) {
+      if (counter[i] == flag) {
+        print(delimiter, "after", delimiter, "line", NR)
+      }
+      counter[i] = flag
+    }
+  }
+}
