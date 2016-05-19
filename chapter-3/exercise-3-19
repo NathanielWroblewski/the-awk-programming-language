@@ -1,0 +1,30 @@
+# exercise 3-19
+#   Write a command `lookup x y` that will print from a known file all
+#   multi-line records having the item name x with value y.
+#
+# lookup x y
+
+BEGIN {
+         RS = ""
+         FS = "\n"
+         x = "check"
+         y = "1024"
+      }
+
+/(^|\n)/ {
+           for (i = 1; i <= NF; i++) {
+             split($i, fields, "\t")
+             values[fields[1]] = fields[2]
+           }
+         }
+
+$0 ~ x  {
+          if (values[x] == y) {
+            for (field in values) {
+              if (values[field]) {
+                print field "\t" values[field]
+              }
+            }
+          }
+        }
+

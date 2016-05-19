@@ -1,0 +1,47 @@
+# exercise 3-16
+#   Because awk variables are not declared, a misspelled name will not be
+#   detected.  Write a program to identify names that are used only once.
+#   To make it truly useful, you will have to handle function declarations
+#   and variables used in functions
+#
+# unused-vars
+
+BEGIN {
+  awkvars = "ARGC|ARGV|ENVIRON|FILENAME|FNR|NF|NR|RLENGTH|RSTART|CONVFMT|" \
+            "FS|OFMT|OFS|ORS|RS|SUBSEP"
+  awkfcns = "close|system|index|length|match|split|sprintf|sub|gsub|substr|" \
+            "tolower|toupper|int|sqrt|exp|log|sin|cos|atan2|rand|srand"
+  keyword = "if|else|while|do|for|in|break|continue|delete|next|function|func|exit"
+}
+
+      { line = $0 }
+
+/"/   { gsub(/"([^"]|\\")*"/, "", line) }     # remove strings,
+/\//  { gsub(/\/([^\/]|\\\/)+\//, "", line) } # reg exprs,
+/#/   { gsub(/#.*/, "", line) }               # and comments
+
+      {
+        n = split(line, x, "[^A-Za-z0-9_]+")  # into words
+        unusedvar = 1
+        for (i = 1; i <= n; i++) {
+          if (x[i] ~ awkvars) next
+          if (x[i] ~ awkfcns) next
+          if (x[i] ~ keyword) next
+          frequency[x[i]]++
+        }
+      }
+
+END {
+  for (word in frequency) {
+    if (frequency[word] == 1) warn("Unused variable declaration: " word)
+  }
+}
+
+function warn(s) {
+  sub(/^[\t]*/, "")
+  printf("file %s, line %d: %s\n\t%s\n", FILENAME, FNR, s, $0)
+}
+
+function unusedFnc () {
+  "im worthless"
+}

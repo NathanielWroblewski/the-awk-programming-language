@@ -1,0 +1,46 @@
+# exercise 3-16
+#   Because awk variables are not declared, a misspelled name will not be
+#   detected.  Write a program to identify names that are used only once.
+#   To make it truly useful, you will have to handle function declarations
+#   and variables used in functions
+#
+# unused-vars
+
+BEGIN {
+  awkvars = "ARGC|ARGV|ENVIRON|FILENAME|FNR|NF|NR|RLENGTH|RSTART|CONVFMT|" \
+            "FS|OFMT|OFS|ORS|RS|SUBSEP|BEGIN|END"
+  awkfcns = "close|system|index|length|match|split|sprintf|sub|gsub|substr|" \
+            "tolower|toupper|int|sqrt|exp|log|sin|cos|atan2|rand|srand"
+  keyword = "if|else|while|do|for|in|break|continue|delete|next|function|func|exit"
+}
+
+      { line = $0 }
+
+/"/   { gsub(/"([^"]|\\")*"/, "", line) }     # remove strings,
+/\//  { gsub(/\/([^\/]|\\\/)+\//, "", line) } # reg exprs,
+/#/   { gsub(/#.*/, "", line) }               # and comments
+      { gsub(/\[|\]|\(|\)|\+|=|<|>|~|;|,|{|}|\\|\$[0-9999]/, " ", line) }
+      { gsub(/[ \t]+/, ",", line) }
+
+      {
+        n = split(line, x, ",")  # into words
+        for (i = 1; i <= n; i++) {
+          word = x[i]
+          if (word !~ awkvars && word !~ awkfcns && word !~ keyword) {
+            frequency[word] += 1
+          }
+        }
+      }
+
+END {
+  for (word in frequency) {
+    if (frequency[word] == 1) {
+      warn("Unused variable declaration: " word)
+    }
+  }
+}
+
+function warn(s) {
+  sub(/^[\t]*/, "")
+  printf("file %s, line %d: %s\n\t%s\n", FILENAME, FNR, s, $0)
+}
