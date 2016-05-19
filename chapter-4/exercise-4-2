@@ -1,0 +1,5 @@
+# exercise 4-2
+#   Because of rounding, column entries printed by `form3` and `form4` do not
+#   always add up to the subtotals shown.  How would you correct this?
+#
+# Prefix with a "~" or include more significiant digits.
